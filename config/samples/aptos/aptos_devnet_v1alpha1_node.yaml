@@ -1,0 +1,35 @@
+# 🔥 Fetch devnet genesis block
+# $ wget https://devnet.aptoslabs.com/genesis.blob
+# 🔥 Create k8s configmap from genesis blob file
+# $ kubectl create configmap devnet-genesis --from-file genesis.blob
+---
+# WARNING: DON'T use the following secret in production
+# https://aptos.dev/tutorials/full-node/network-identity-fullnode/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node-private-key
+stringData:
+  key: 755EFCB7A02248562228CC7AF80FC667B7B9360541B165A1A2B97742AAC30AB7
+---
+apiVersion: aptos.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: aptos-devnet-node
+spec:
+  network: devnet
+  api: true
+  apiPort: 6789
+  p2pPort: 7555
+  metricsPort: 9102
+  waypoint: "0:2f485c632e01f81a4ea23e5ed963335527c0d14e727e48ba188169df56987872"
+  genesisConfigmapName: devnet-genesis
+  nodePrivateKeySecretName: node-private-key
+  peerId: "76c8ca8bb75d1abd853fc17b70cc72cb78a63425fa85be96743825d93cc57d6f"
+  seedPeers:
+    - id: "bb14af025d226288a3488b4433cf5cb54d6a710365a2d95ac6ffbd9b9198a86a"
+      addresses:
+        - "/dns4/pfn0.node.devnet.aptoslabs.com/tcp/6182/noise-ik/bb14af025d226288a3488b4433cf5cb54d6a710365a2d95ac6ffbd9b9198a86a/handshake/0"
+    - id: "7fe8523388084607cdf78ff40e3e717652173b436ae1809df4a5fcfc67f8fc61"
+      addresses:
+        - "/dns4/pfn2.node.devnet.aptoslabs.com/tcp/6182/noise-ik/f6b135a59591677afc98168791551a0a476222516fdc55869d2b649c614d965b/handshake/0"
